@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spirezen | Unlock Exclusive Tech Careers & Opportunities</title>
+    <title>Thecloutcircle | Unlock Exclusive Tech Careers & Opportunities</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -951,6 +951,78 @@
             fill: currentColor;
         }
 
+        /* Hero Redesign Enhancements */
+        .highlight-282k {
+            color: var(--gold);
+            font-weight: 800;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .hero-brand-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 380px;
+            padding: 2rem;
+            border-radius: 40px;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform: rotate(-2deg);
+            transition: var(--transition);
+        }
+
+        .hero-brand-wrapper:hover {
+            transform: rotate(0) translateY(-10px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 30px 60px -12px rgba(212, 175, 55, 0.2);
+        }
+
+        .hero-brand-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .hero-brand-wrapper:hover::after {
+            opacity: 1;
+        }
+
+        .hero-brand-text {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: var(--font-heading);
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            z-index: 2;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+        }
+
+        @media (max-width: 900px) {
+            .hero-brand-text {
+                font-size: 2.8rem;
+            }
+
+            .hero-brand-wrapper {
+                min-height: 280px;
+            }
+        }
+
         /* Mobile Overrides */
         @media (max-width: 768px) {
             h1 {
@@ -1108,7 +1180,9 @@
     <section class="hero">
         <div class="container hero-grid">
             <div class="hero-content fade-up">
-                <h1>Are you ready to be part of project 28.2k.</h1>
+                <h1>Are you ready to be part of <span
+                        style="white-space: nowrap; color: var(--gold); font-weight: 700;">PROJECT <span
+                            class="highlight-282k" style="color: inherit;">28.2K</span></span>.</h1>
                 <p>Here is your solution for your unstable jobs replaced by 100% job security.</p>
 
                 <div class="social-proof-line">
@@ -1131,36 +1205,8 @@
             </div>
 
             <div class="hero-image fade-up delay-2">
-                <div class="phone-mockup">
-                    <div class="phone-header">
-                        <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80"
-                            alt="Group Logo">
-                        <div class="phone-header-info">
-                            <h4>Spirezen Job Posting</h4>
-                            <p>Akshay, Rahul, Priya...</p>
-                        </div>
-                    </div>
-                    <div class="chat-container">
-                        <div class="msg">
-                            <span class="msg-sender">+91 98*** ***12</span>
-                            Just posted a React internship opportunity in Bangalore. Check the doc I sent.
-                            <span class="msg-time">10:42 AM</span>
-                        </div>
-                        <div class="msg">
-                            <span class="msg-sender">+91 97*** ***45</span>
-                            Anyone here working with Next.js 14? Running into a hydration error.
-                            <span class="msg-time">11:05 AM</span>
-                        </div>
-                        <div class="msg sent">
-                            Freelance UI project available — DM if interested. Needs to be done by next week.
-                            <span class="msg-time">11:30 AM</span>
-                        </div>
-                        <div class="msg">
-                            <span class="msg-sender">+91 80*** ***88</span>
-                            Thanks for sharing that job lead! I just scheduled my HR round. 🙌
-                            <span class="msg-time">1:15 PM</span>
-                        </div>
-                    </div>
+                <div class="hero-brand-wrapper">
+                    <h2 class="hero-brand-text">THECLOUTCIRCLE</h2>
                 </div>
             </div>
         </div>
@@ -1415,13 +1461,14 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-logo">Spirezen<span>.</span></div>
+            <div class="footer-logo">Thecloutcircle<span>.</span></div>
             <p>Tech Community & Job Posting</p>
             <div class="footer-links">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Community Guidelines</a>
             </div>
-            <p class="copyright">Made with ❤️ for Tech Professionals &copy; 2024</p>
+            <p class="copyright">Made with ❤️ <a href="https://spirezenenterprises.com">Spirezen enterprises </a> &copy;
+                2024</p>
         </div>
     </footer>
 
