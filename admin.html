@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spirezen Admin | Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-dark: #020617;
+            --bg-darker: #0b1120;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --gold: #d4af37;
+            --gold-hover: #f2c94c;
+            --wa-green: #25D366;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base & Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-darker);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+        }
+
+        /* Stats Blocks */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            color: #fff;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.6rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .btn {
+            background: var(--gold);
+            color: var(--bg-darker);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--gold-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+        }
+
+        .actions-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .actions-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 2rem 0.5rem;
+                align-items: center;
+            }
+
+            .logo h2,
+            .nav-links span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1rem;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="logo">
+                <i class="fas fa-crown"></i>
+                <h2>TheClout<span>circle</span></h2>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                <li><a href="#"><i class="fas fa-users"></i> <span>Applicants</span></a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Applicant Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn" onclick="exportToCSV()">
+                        <i class="fas fa-download"></i>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Applications</h3>
+                    <div class="value" id="totalApps">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Freshers</h3>
+                    <div class="value" id="fresherCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Experienced</h3>
+                    <div class="value" id="expCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Locations</h3>
+                    <div class="value" id="locCount">0</div>
+                </div>
+            </div>
+
+            <!-- Management Section -->
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, phone or location..."
+                        onkeyup="filterTable()">
+                </div>
+                <button class="btn btn-danger" onclick="clearAllData()">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear All
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="appTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Age</th>
+                            <th>Qual.</th>
+                            <th>Exp</th>
+                            <th>Vehicle</th>
+                            <th>Location</th>
+                            <th>Referral</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appTbody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApplications();
+        });
+
+        function loadApplications() {
+            const apps = JSON.parse(localStorage.getItem('spirezen_applications') || '[]');
+            const tbody = document.getElementById('appTbody');
+            tbody.innerHTML = '';
+
+            // Update Stats
+            document.getElementById('totalApps').textContent = apps.length;
+
+            let freshers = 0;
+            let experienced = 0;
+            let locations = new Set();
+
+            apps.forEach(app => {
+                if (app.experience === 'Fresher') freshers++;
+                else experienced++;
+                locations.add(app.location);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600; color: #fff;">${app.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${app.timestamp}</div>
+                    </td>
+                    <td>${app.phone}</td>
+                    <td>${app.age}</td>
+                    <td>${app.qualification}</td>
+                    <td>${app.experience}</td>
+                    <td>${app.vehicle}</td>
+                    <td>${app.location}</td>
+                    <td><span class="status-pill">${app.coupon || 'N/A'}</span></td>
+                    <td>
+                        <button class="actions-btn" onclick="deleteApp('${app.id}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('fresherCount').textContent = freshers;
+            document.getElementById('expCount').textContent = experienced;
+            document.getElementById('locCount').textContent = locations.size;
+
+            if (apps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">No applications found</td></tr>`;
+            }
+        }
+
+        function deleteApp(id) {
+            if (confirm('Are you sure you want to delete this application?')) {
+                let apps = JSON.parse(localStorage.getItem('spirezen_applications') || '[]');
+                apps = apps.filter(app => app.id !== id);
+                localStorage.setItem('spirezen_applications', JSON.stringify(apps));
+                loadApplications();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('CRITICAL: This will delete ALL application data. Continue?')) {
+                localStorage.removeItem('spirezen_applications');
+                loadApplications();
+            }
+        }
+
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const rows = document.getElementById('appTbody').getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].cells.length < 4) continue;
+                const text = rows[i].textContent.toLowerCase();
+                rows[i].style.display = text.includes(filter) ? '' : 'none';
+            }
+        }
+
+        function exportToCSV() {
+            const apps = JSON.parse(localStorage.getItem('spirezen_applications') || '[]');
+            if (apps.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            const headers = ['ID', 'Name', 'Phone', 'Age', 'Qualification', 'Experience', 'Gender', 'Vehicle', 'Location', 'Languages', 'Coupon', 'Timestamp'];
+            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+
+            apps.forEach(app => {
+                const row = [
+                    app.id,
+                    `"${app.name}"`,
+                    app.phone,
+                    app.age,
+                    app.qualification,
+                    app.experience,
+                    app.gender,
+                    app.vehicle,
+                    app.location,
+                    `"${app.languages}"`,
+                    `"${app.coupon || 'N/A'}"`,
+                    app.timestamp
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `spirezen_applicants_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+
+</html>
