@@ -301,6 +301,49 @@
             color: var(--text-muted);
             font-size: 0.95rem;
         }
+
+        /* Mobile Overrides */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .section {
+                padding: 100px 0 60px 0;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .checkbox-group {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+
+            .btn-submit {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+
+            .navbar .logo {
+                font-size: 0.9rem;
+            }
+
+            .pulse-dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
     </style>
 </head>
 
