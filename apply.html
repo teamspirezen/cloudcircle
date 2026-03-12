@@ -487,7 +487,7 @@
             <div class="footer-logo">Thecloutcircle<span>.</span></div>
             <p>Tech Community & Job Posting</p>
             <p class="copyright" style="font-size: 0.85rem; color: #64748b; margin-top: 1rem;">Made with ❤️ for Tech
-                Professionals &copy; 2024</p>
+                Professionals &copy; 2026</p>
         </div>
     </footer>
 
@@ -526,28 +526,36 @@
                     location: formData.get('location'),
                     coupon: formData.get('coupon') || 'N/A',
                     languages: langs.join(', '),
+                    status: 'Pending',
                     timestamp: new Date().toLocaleString()
                 };
 
-                // Save to localStorage locally
-                setTimeout(() => {
-                    try {
-                        let applications = JSON.parse(localStorage.getItem('thecloutcircle_applications') || '[]');
-                        applications.push(applicationData);
-                        localStorage.setItem('thecloutcircle_applications', JSON.stringify(applications));
-
+                // Save to API
+                fetch('/api/applications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(applicationData)
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
                         statusMessage.className = 'status-message status-success';
                         statusMessage.textContent = 'Application submitted successfully! We will review and contact you.';
                         form.reset();
-                    } catch (error) {
-                        console.error('Error saving locally:', error);
+                    })
+                    .catch(error => {
+                        console.error('Error saving to server:', error);
                         statusMessage.className = 'status-message status-error';
                         statusMessage.textContent = 'Oops! Something went wrong saving your application.';
-                    } finally {
+                    })
+                    .finally(() => {
                         submitBtn.disabled = false;
                         submitBtn.textContent = 'Submit Application';
-                    }
-                }, 600); // Small visual delay for submission aesthetic
+                    });
             });
         });
     </script>
