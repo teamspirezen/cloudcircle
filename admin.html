@@ -17,14 +17,14 @@
     <style>
         /* CSS Variables */
         :root {
-            --bg-dark: #020617;
-            --bg-darker: #0b1120;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --gold: #d4af37;
-            --gold-hover: #f2c94c;
-            --wa-green: #25D366;
+            --bg-dark: #090909;
+            --bg-darker: #000000;
+            --bg-card: rgba(20, 20, 20, 0.7);
+            --gold: #FF6B2B;
+            --gold-hover: #ff854e;
+            --wa-green: #FF6B2B;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #a3a3a3;
             --border-color: rgba(255, 255, 255, 0.08);
             --font-heading: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
@@ -38,12 +38,17 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+
         body {
             font-family: var(--font-body);
             background-color: var(--bg-dark);
             color: var(--text-main);
             line-height: 1.6;
-            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
         }
@@ -52,6 +57,7 @@
         .admin-wrapper {
             display: flex;
             min-height: 100vh;
+            width: 100%;
         }
 
         /* Sidebar */
@@ -104,7 +110,7 @@
 
         .nav-links a.active,
         .nav-links a:hover {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 107, 43, 0.1);
             color: var(--gold);
         }
 
@@ -113,6 +119,8 @@
             flex: 1;
             margin-left: 260px;
             padding: 2rem;
+            min-width: 0;
+            width: 100%;
         }
 
         header {
@@ -169,7 +177,7 @@
         }
 
         .search-box {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(9, 9, 9, 0.6);
             border: 1px solid var(--border-color);
             border-radius: 50px;
             padding: 0.6rem 1.2rem;
@@ -224,8 +232,10 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             backdrop-filter: blur(10px);
+            max-width: 100%;
         }
 
         table {
@@ -235,7 +245,7 @@
         }
 
         th {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(9, 9, 9, 0.8);
             padding: 1rem;
             font-size: 0.85rem;
             text-transform: uppercase;
@@ -264,7 +274,7 @@
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(255, 107, 43, 0.2);
             color: var(--gold);
         }
 
@@ -316,6 +326,7 @@
                 align-items: center;
                 border-right: none;
                 border-bottom: 1px solid var(--border-color);
+                z-index: 100;
             }
 
             .nav-links {
@@ -337,6 +348,8 @@
 
             .table-container {
                 overflow-x: auto;
+                width: 100%;
+                display: block;   
             }
 
             header h1 {
@@ -352,6 +365,10 @@
         @media (max-width: 480px) {
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 1rem;
             }
 
             .controls {
@@ -403,7 +420,7 @@
         .login-box input {
             width: 100%;
             padding: 0.8rem 1rem;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(9, 9, 9, 0.6);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: #fff;
@@ -437,9 +454,9 @@
         }
 
         .status-select {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(9, 9, 9, 0.8);
             color: var(--gold);
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(255, 107, 43, 0.3);
             padding: 4px 8px;
             border-radius: 20px;
             font-size: 0.75rem;
@@ -453,7 +470,7 @@
         .status-select:focus,
         .status-select:hover {
             border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 107, 43, 0.1);
         }
     </style>
 </head>
@@ -478,7 +495,7 @@
     <div class="admin-wrapper" id="adminWrapper" style="display: none;">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <a href="#" class="logo">
+            <a href="index.html" class="logo">
                 <i class="fas fa-crown"></i>
                 <h2>TheClout<span>circle</span></h2>
             </a>
