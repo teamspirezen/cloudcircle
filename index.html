@@ -131,11 +131,14 @@
             font-size: 1.1rem;
         }
 
-        /* Animations */
+        /* ── Optimized Animations ── */
         .fade-up {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
+            backface-visibility: hidden;
         }
 
         .fade-up.visible {
@@ -143,17 +146,82 @@
             transform: translateY(0);
         }
 
+        /* Faster Reveal for smaller elements */
+        .fade-up-fast {
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Staggered Delays - More Granular */
         .delay-1 {
-            transition-delay: 0.1s;
+            transition-delay: 100ms;
         }
 
         .delay-2 {
-            transition-delay: 0.2s;
+            transition-delay: 200ms;
         }
 
         .delay-3 {
-            transition-delay: 0.3s;
+            transition-delay: 300ms;
         }
+
+        .delay-4 {
+            transition-delay: 400ms;
+        }
+
+        .delay-5 {
+            transition-delay: 500ms;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        /* Floating Animation for Hero Images */
+        .float-anim {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(0deg);
+            }
+        }
+
+        /* Subtle Background Glow Pulse */
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.1);
+            }
+        }
+
 
         /* Navbar */
         .navbar {
@@ -593,81 +661,277 @@
             font-size: 0.95rem;
         }
 
-        /* Testimonials */
+        /* ━━ Testimonials – 3D Card Stack ━━ */
         .testimonials {
             background: var(--bg-darker);
+            position: relative;
+            overflow: hidden;
         }
 
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            margin-top: 3rem;
+        .testimonials::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 50%, rgba(212, 175, 55, 0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
+            pointer-events: none;
         }
 
-        @media (min-width: 768px) {
-            .testimonial-grid {
-                grid-template-columns: repeat(3, 1fr);
+        .tstack-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tstack-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: -0.75rem;
+            margin-bottom: 4rem;
+            font-size: 1rem;
+        }
+
+        /* Scene */
+        .tstack-scene {
+            perspective: 1200px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Card deck wrapper */
+        .tstack-deck {
+            position: relative;
+            height: 340px;
+        }
+
+        @media (max-width: 600px) {
+            .tstack-deck {
+                height: 420px;
             }
         }
 
-        .testimonial-card {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            border-radius: 20px;
+        /* Individual cards */
+        .tstack-card {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 2.8rem 2.8rem 2.2rem;
+            background: linear-gradient(140deg, rgba(30, 41, 59, 0.92), rgba(10, 17, 35, 0.97));
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            transition: var(--transition);
+            gap: 1.2rem;
+            cursor: pointer;
+            /* base hidden state: behind and scaled down */
+            transform: rotateY(40deg) translateX(120%) scale(0.82);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.8s ease,
+                box-shadow 0.4s ease;
+            pointer-events: none;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
-        .testimonial-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+
+        /* Active – front and center */
+        .tstack-card.state-active {
+            transform: rotateY(0deg) translateX(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 3;
+            box-shadow: 0 32px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 175, 55, 0.12) inset;
         }
 
-        .rating {
+        /* Peek right  (next card) */
+        .tstack-card.state-next {
+            transform: rotateY(-28deg) translateX(55%) scale(0.88);
+            opacity: 0.45;
+            z-index: 2;
+        }
+
+        /* Peek further right */
+        .tstack-card.state-next2 {
+            transform: rotateY(-22deg) translateX(72%) scale(0.78);
+            opacity: 0.22;
+            z-index: 1;
+        }
+
+        /* Exiting left */
+        .tstack-card.state-prev {
+            transform: rotateY(50deg) translateX(-110%) scale(0.82);
+            opacity: 0;
+            z-index: 0;
+        }
+
+        /* Top row */
+        .tstack-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tstack-stars {
             color: var(--gold);
-            font-size: 0.9rem;
-            letter-spacing: 2px;
+            font-size: 1rem;
+            letter-spacing: 3px;
         }
 
-        .testimonial-text {
-            font-size: 1.05rem;
-            font-style: italic;
-            color: #cbd5e1;
-            line-height: 1.7;
-        }
-
-        .testimonial-author {
+        .tstack-badge {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 1.5rem;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.22);
+            padding: 3px 9px 3px 6px;
+            border-radius: 20px;
         }
 
-        .testimonial-author img {
+        .tstack-badge svg {
+            width: 11px;
+            height: 11px;
+            fill: #34d399;
+        }
+
+        /* Big opening quote */
+        .tstack-quote-icon {
+            font-family: Georgia, serif;
+            font-size: 5.5rem;
+            line-height: 0.55;
+            color: var(--gold);
+            opacity: 0.13;
+            user-select: none;
+            margin-bottom: -0.5rem;
+        }
+
+        .tstack-text {
+            font-size: 1.05rem;
+            color: #dde5f0;
+            line-height: 1.8;
+            font-style: italic;
+            flex: 1;
+        }
+
+        /* Author row */
+        .tstack-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-top: 1.1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        /* Glowing avatar ring */
+        .tstack-avatar-wrap {
+            position: relative;
+        }
+
+        .tstack-avatar-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold), #fef08a, var(--gold));
+            animation: spinRing 4s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes spinRing {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .tstack-avatar-wrap img {
+            position: relative;
+            z-index: 1;
             width: 50px;
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid var(--bg-darker);
         }
 
-        .author-info h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: var(--font-body);
-            color: #fff;
-            margin-bottom: 2px;
+        .tstack-author-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f1f5f9;
         }
 
-        .author-info p {
-            font-size: 0.85rem;
+        .tstack-author-role {
+            font-size: 0.78rem;
             color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Controls */
+        .tstack-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .tstack-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(212, 175, 55, 0.35);
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--gold);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.25s, border-color 0.25s, transform 0.2s;
+        }
+
+        .tstack-btn:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--gold);
+            transform: scale(1.12);
+        }
+
+
+        /* Dots */
+        .tstack-dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .tstack-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.25);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .tstack-dot.active {
+            background: var(--gold);
+            transform: scale(1.5);
+        }
+
+        @media (max-width: 480px) {
+            .tstack-card {
+                padding: 2rem 1.4rem 1.8rem;
+            }
+
+            .tstack-text {
+                font-size: 0.95rem;
+            }
         }
 
         /* Checklist Section */
@@ -723,68 +987,368 @@
             font-weight: 500;
         }
 
-        /* Admin */
+        /* ── Admin Section ── */
         .admin-section {
             background: var(--bg-darker);
-            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .admin-content {
-            max-width: 700px;
+        .admin-section::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.07) 0%, transparent 65%);
+            pointer-events: none;
+            animation: glowPulse 10s ease-in-out infinite;
+        }
+
+        .admin-section::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            right: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 65%);
+            pointer-events: none;
+            animation: glowPulse 8s ease-in-out infinite reverse;
+        }
+
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 3rem;
+            align-items: center;
+            max-width: 1100px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Left — Profile Card */
+        .admin-profile-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            position: relative;
+            backdrop-filter: blur(12px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .admin-profile-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.08), 0 0 0 1px rgba(212, 175, 55, 0.15) inset;
+        }
+
+        .admin-photo-wrap {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .admin-photo-ring {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold) 0deg, transparent 120deg, var(--gold) 200deg, transparent 300deg, var(--gold) 360deg);
+            animation: ring-spin 8s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes ring-spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .admin-photo {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            border: 3px solid var(--gold);
-            padding: 4px;
-            margin: 0 auto 1.5rem;
+            border: 4px solid var(--bg-darker);
+            overflow: hidden;
             position: relative;
+            z-index: 1;
         }
 
         .admin-photo img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.5s ease;
+        }
+
+        .admin-profile-card:hover .admin-photo img {
+            transform: scale(1.05);
+        }
+
+        .admin-online-badge {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 3px solid var(--bg-darker);
+            z-index: 2;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
         }
 
         .admin-name {
-            font-size: 1.8rem;
-            font-weight: 400;
+            font-size: 1.7rem;
+            font-weight: 700;
             font-family: var(--font-heading);
             color: #fff;
+            margin-bottom: 0.3rem;
         }
 
-        .admin-title {
+        .admin-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             color: var(--gold);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.78rem;
             font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            margin-bottom: 1.8rem;
+        }
+
+        .admin-role-badge svg {
+            width: 13px;
+            height: 13px;
+            fill: var(--gold);
+        }
+
+        .admin-stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .admin-stat {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            padding: 1rem 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .admin-stat:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .admin-stat-num {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), #f2c94c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .admin-social-links {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .admin-social-link {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .admin-social-link:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .admin-social-link svg {
+            width: 17px;
+            height: 17px;
+            fill: currentColor;
+        }
+
+        /* Right — Bio Panel */
+        .admin-bio-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .admin-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .admin-eyebrow-line {
+            width: 32px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        .admin-headline {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #fff;
+            margin: 0;
+        }
+
+        .admin-headline span {
+            background: linear-gradient(135deg, var(--gold) 0%, #f2c94c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .admin-bio {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
+            line-height: 1.85;
+            margin: 0;
         }
 
-        .admin-quote {
+        .admin-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .admin-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.4rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .admin-pill:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+        }
+
+        .admin-pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+
+        .admin-quote-block {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.07) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 18px;
+            padding: 1.8rem 2rem;
+            position: relative;
+        }
+
+        .admin-quote-mark {
+            font-size: 5rem;
+            line-height: 0;
+            color: var(--gold);
+            opacity: 0.25;
+            font-family: Georgia, serif;
+            position: absolute;
+            top: 1.4rem;
+            left: 1.5rem;
+        }
+
+        .admin-quote-text {
             font-style: italic;
-            color: #e2e8f0;
-            font-family: var(--font-body);
             font-size: 1.15rem;
-            padding: 1rem 2rem;
-            border-left: 3px solid var(--gold);
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 0 10px 10px 0;
+            color: #e2e8f0;
+            line-height: 1.75;
+            padding-left: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-quote-author {
+            margin-top: 0.8rem;
+            font-size: 0.82rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding-left: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-profile-card {
+                max-width: 380px;
+                margin: 0 auto;
+            }
+
+            .admin-headline {
+                font-size: 1.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .admin-photo-wrap,
+            .admin-photo {
+                width: 110px;
+                height: 110px;
+            }
+
+            .admin-name {
+                font-size: 1.5rem;
+            }
         }
 
         /* FAQ */
@@ -864,7 +1428,23 @@
 
         .cta-glowing {
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            animation: ctaPulse 3s ease-in-out infinite;
         }
+
+        @keyframes ctaPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 45px rgba(212, 175, 55, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
 
         .trust-micro {
             display: flex;
@@ -1023,140 +1603,266 @@
             }
         }
 
-        /* Mobile Overrides */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
+        /* ── Global Mobile Fixes ── */
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
 
-            h2 {
-                font-size: 1.8rem;
-            }
+        /* ── Advanced Device Optimization (Targeting User List) ── */
 
-            .hero {
-                padding: 100px 0 60px;
-            }
-
-            .hero-grid {
+        /* Standard Mobile (Default stack for everything < 900px) */
+        @media (max-width: 900px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
                 gap: 2.5rem;
+            }
+
+            .admin-profile-card {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .admin-bio-panel {
                 text-align: center;
             }
 
-            .hero-content p {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .social-proof-line,
-            .hero-trust {
+            .admin-eyebrow,
+            .admin-social-links,
+            .admin-pills {
                 justify-content: center;
-                flex-wrap: wrap;
             }
 
-            .trust-grid {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-                flex-wrap: wrap;
+            .admin-quote-block {
+                text-align: left;
+            }
+        }
+
+        /* 📱 TALL PHONES (iPhone 12/14 Pro Max, S20 Ultra, Pixel 7) */
+        @media (min-height: 800px) and (max-width: 480px) {
+            .hero {
+                padding-top: 160px;
+            }
+
+            .hero-content h1 {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* 📱 SMALL PHONES (iPhone SE, S8+) */
+        @media (max-width: 360px) {
+            :root {
+                --section-padding: 50px 0;
+            }
+
+            h1 {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.4rem !important;
+            }
+
+            .btn-large {
+                padding: 0.8rem 1.4rem;
+                font-size: 0.9rem;
             }
 
             .stat-num {
-                font-size: 4rem;
+                font-size: 2.6rem;
+            }
+
+            .admin-headline {
+                font-size: 1.5rem;
+            }
+
+            .navbar .btn {
+                font-size: 0.7rem !important;
+                padding: 0.4rem 0.6rem !important;
+            }
+        }
+
+        /* Standard Small Mobile (up to 480px) */
+        @media (max-width: 480px) {
+            .section {
+                padding: 60px 0;
+            }
+
+            h1 {
+                font-size: 1.85rem !important;
+                line-height: 1.3;
+            }
+
+            h2 {
+                font-size: 1.6rem !important;
+            }
+
+            .hero {
+                padding: 110px 0 50px;
+            }
+
+            .navbar .btn {
+                padding: 0.45rem 0.8rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .stat-num {
+                font-size: 3.2rem;
+            }
+
+            .stat-logo-box {
+                width: 80px;
+                height: 80px;
+            }
+
+            .tstack-deck {
+                height: 460px;
+            }
+
+            .checklist-box {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .admin-headline {
+                font-size: 1.8rem;
+            }
+
+            .admin-stats-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
             }
 
             .cta-section h2 {
                 font-size: 2rem;
             }
 
-            .btn {
-                white-space: nowrap;
+            .trust-micro {
+                gap: 12px;
+                font-size: 0.8rem;
+            }
+
+            .floating-wa {
+                width: 55px;
+                height: 55px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .floating-wa svg {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        /* 📖 FOLDABLES & MEDIUM TABLETS (Galaxy Z Fold, Surface Duo, iPad Mini) */
+        @media (min-width: 580px) and (max-width: 767px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-grid {
+                gap: 2rem;
+            }
+
+            .hero-grid {
+                text-align: left;
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content p {
+                margin-left: 0;
+            }
+
+            .social-proof-line,
+            .hero-trust {
+                justify-content: flex-start;
+            }
+        }
+
+        /* 💻 LARGE TABLETS & HUBS (iPad Pro, Surface Pro 7, Nest Hub Max) */
+        @media (min-width: 1025px) and (max-width: 1300px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            h1 {
+                font-size: 3.5rem;
+            }
+
+            .admin-grid {
+                grid-template-columns: 340px 1fr;
+                gap: 4rem;
+            }
+
+            .hero-brand-text {
+                font-size: 3.2rem;
+            }
+        }
+
+        /* 🏠 SMART DISPLAYS (Nest Hub, Nest Hub Max) */
+        @media (min-width: 1024px) and (max-height: 800px) {
+            .hero {
+                min-height: 85vh;
+                padding-top: 100px;
+            }
+
+            .section {
+                padding: 80px 0;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+        }
+
+        /* ── All Section Animation Optimization ── */
+        .fade-up,
+        .fade-up-fast,
+        .float-anim,
+        .admin-profile-card,
+        .tstack-card {
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Smooth Anchor Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Disable heavy animations on low-power mode or high-latency devices */
+        @media (prefers-reduced-motion: reduce) {
+
+            .fade-up,
+            .float-anim,
+            .admin-photo-ring {
+                animation: none !important;
+                transition: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+
+
+        /* General Consistency Fixes */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 100px 0 60px;
+            }
+
+            .trust-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-num {
+                font-size: 4rem;
             }
 
             .phone-mockup {
                 max-width: 280px;
-            }
-
-            .checklist-box {
-                padding: 2rem 1.5rem;
-                width: 100%;
-            }
-
-            .admin-photo {
-                width: 100px;
-                height: 100px;
-            }
-
-            .admin-name {
-                font-size: 1.5rem;
-            }
-
-            .trust-micro {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            .btn-large {
-                padding: 0.8rem 1.2rem;
-                font-size: 0.9rem;
-            }
-
-            .navbar .btn {
-                padding: 0.4rem 0.8rem !important;
-                font-size: 0.75rem !important;
-            }
-
-            .logo {
-                font-size: 0.85rem;
-            }
-
-            .pulse-dot {
-                width: 8px;
-                height: 8px;
-            }
-
-            .check-item {
-                font-size: 0.95rem;
-            }
-
-            .stat-num {
-                font-size: 3rem;
-            }
-
-            .faq-question {
-                font-size: 1rem;
-                padding: 1rem 0;
-            }
-
-            .faq-answer {
-                font-size: 0.85rem;
-            }
-
-            .cards-grid,
-            .testimonial-grid {
-                gap: 1.5rem;
-            }
-
-            .card {
-                padding: 1.8rem 1.5rem;
-            }
-
-            .testimonial-card {
-                padding: 1.5rem;
-            }
-
-            .stat-logo-box {
-                width: 70px;
-                height: 70px;
             }
         }
     </style>
@@ -1204,7 +1910,7 @@
                 </div>
             </div>
 
-            <div class="hero-image fade-up delay-2">
+            <div class="hero-image fade-up float-anim delay-2">
                 <div class="hero-brand-wrapper">
                     <h2 class="hero-brand-text">THECLOUTCIRCLE</h2>
                 </div>
@@ -1220,18 +1926,18 @@
                 <div class="stat-text">Members Recruited </div>
             </div>
             <div class="stat-block">
-                <!-- Replace 'YOUR_WORKSHOP_IMAGE_URL.jpg' with your actual image path -->
                 <div class="stat-logo-box">
-                    <img src="YOUR_WORKSHOP_IMAGE_URL.jpg" alt="Workshop Icon" class="stat-logo-img"
-                        onerror="this.src='https://placehold.co/100x100/ffffff/94a3b8?text=Image'">
+                    <img src="https://img.icons8.com/ios-filled/100/d4af37/conference-call.png" alt="Workshop Icon"
+                        class="stat-logo-img"
+                        onerror="this.src='https://placehold.co/100x100/ffffff/d4af37?text=Workshop'">
                 </div>
                 <div class="stat-text">WEEKLY WORKSHOPS</div>
             </div>
             <div class="stat-block">
-                <!-- Replace 'YOUR_GOVT_LOGO_URL.png' with your actual logo path -->
                 <div class="stat-logo-box">
-                    <img src="Government-Of-Tamil-Nadu-Logo-Vector.svg-.png" alt="Govt Logo" class="stat-logo-img"
-                        onerror="this.src='https://placehold.co/100x100/ffffff/94a3b8?text=Logo'">
+                    <img src="https://img.icons8.com/ios-filled/100/d4af37/checked-user-male.png" alt="Verified Icon"
+                        class="stat-logo-img"
+                        onerror="this.src='https://placehold.co/100x100/ffffff/d4af37?text=Verified'">
                 </div>
                 <div class="stat-text">Verified Jobs Under Govt of India</div>
             </div>
@@ -1265,55 +1971,150 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="section testimonials">
+    <!-- Testimonials – 3D Card Stack -->
+    <section class="section testimonials tstack-section">
         <div class="container">
-            <h2 class="text-center fade-up">Real developers. Real results.</h2>
-            <div class="testimonial-grid">
-                <div class="testimonial-card fade-up delay-1">
-                    <div class="rating">★★★★★</div>
-                    <p class="testimonial-text">"Got two freelance leads in the first week. The signal-to-noise ratio in
-                        this group is incredible. No spam, just real work."</p>
-                    <div class="testimonial-author">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="Rahul Sharma">
-                        <div class="author-info">
-                            <h4>Rahul Sharma</h4>
-                            <p>Frontend Developer, Bangalore</p>
+            <h2 class="text-center fade-up">Real members. Real results.</h2>
+            <p class="tstack-subtitle fade-up delay-1">Join 1,200+ professionals already winning inside the community.
+            </p>
+
+            <div class="tstack-scene fade-up delay-2">
+
+                <!-- Deck -->
+                <div class="tstack-deck" id="tstackDeck">
+
+                    <!-- Card 1 -->
+                    <div class="tstack-card state-active">
+                        <div class="tstack-top">
+                            <div class="tstack-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span class="tstack-badge"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>Verified</span>
+                        </div>
+                        <div class="tstack-quote-icon">&ldquo;</div>
+                        <p class="tstack-text">"Got two freelance leads in my very first week here. The signal-to-noise
+                            ratio is incredible — no spam, just real work and real people who want to help."</p>
+                        <div class="tstack-author">
+                            <div class="tstack-avatar-wrap"><img src="https://i.pravatar.cc/150?img=11"
+                                    alt="Rahul Sharma"></div>
+                            <div>
+                                <div class="tstack-author-name">Rahul Sharma</div>
+                                <div class="tstack-author-role">Frontend Developer, Bangalore</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="testimonial-card fade-up delay-2">
-                    <div class="rating">★★★★★</div>
-                    <p class="testimonial-text">"Found a remote internship through this group. People are actually
-                        willing to help you debug and review portfolios."</p>
-                    <div class="testimonial-author">
-                        <img src="https://i.pravatar.cc/150?img=5" alt="Priya Desai">
-                        <div class="author-info">
-                            <h4>Priya Desai</h4>
-                            <p>CS Student, Mumbai</p>
+
+                    <!-- Card 2 -->
+                    <div class="tstack-card state-next">
+                        <div class="tstack-top">
+                            <div class="tstack-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span class="tstack-badge"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>Verified</span>
+                        </div>
+                        <div class="tstack-quote-icon">&ldquo;</div>
+                        <p class="tstack-text">"Found a remote internship in under 10 days. People actually reviewed my
+                            portfolio and gave honest, constructive feedback I couldn't get anywhere else."</p>
+                        <div class="tstack-author">
+                            <div class="tstack-avatar-wrap"><img src="https://i.pravatar.cc/150?img=5"
+                                    alt="Priya Desai"></div>
+                            <div>
+                                <div class="tstack-author-name">Priya Desai</div>
+                                <div class="tstack-author-role">CS Student, Mumbai</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="testimonial-card fade-up delay-3">
-                    <div class="rating">★★★★★</div>
-                    <p class="testimonial-text">"The quality here is way better than random Facebook or LinkedIn groups.
-                        Direct access to founders looking for talent."</p>
-                    <div class="testimonial-author">
-                        <img src="https://i.pravatar.cc/150?img=12" alt="Arjun Patel">
-                        <div class="author-info">
-                            <h4>Arjun Patel</h4>
-                            <p>Full-Stack Freelancer, Pune</p>
+
+                    <!-- Card 3 -->
+                    <div class="tstack-card state-next2">
+                        <div class="tstack-top">
+                            <div class="tstack-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span class="tstack-badge"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>Verified</span>
+                        </div>
+                        <div class="tstack-quote-icon">&ldquo;</div>
+                        <p class="tstack-text">"Landed my first &#8377;28k/month role in 3 weeks flat. The daily job
+                            drops and senior guidance in this community are genuinely life-changing."</p>
+                        <div class="tstack-author">
+                            <div class="tstack-avatar-wrap"><img src="https://i.pravatar.cc/150?img=33"
+                                    alt="Karan Mehta"></div>
+                            <div>
+                                <div class="tstack-author-name">Karan Mehta</div>
+                                <div class="tstack-author-role">SDE Trainee, Chennai</div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Card 4 -->
+                    <div class="tstack-card">
+                        <div class="tstack-top">
+                            <div class="tstack-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span class="tstack-badge"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>Verified</span>
+                        </div>
+                        <div class="tstack-quote-icon">&ldquo;</div>
+                        <p class="tstack-text">"Startup founder DM'd me directly after I posted in the community.
+                            Interviewed and got the offer the same day. This is the fastest hiring I've ever seen."</p>
+                        <div class="tstack-author">
+                            <div class="tstack-avatar-wrap"><img src="https://i.pravatar.cc/150?img=43"
+                                    alt="Aditya Verma"></div>
+                            <div>
+                                <div class="tstack-author-name">Aditya Verma</div>
+                                <div class="tstack-author-role">Startup SDE, Bangalore</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="tstack-card">
+                        <div class="tstack-top">
+                            <div class="tstack-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <span class="tstack-badge"><svg viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>Verified</span>
+                        </div>
+                        <div class="tstack-quote-icon">&ldquo;</div>
+                        <p class="tstack-text">"Cleared my first technical interview after two mock sessions here. 0
+                            connections in tech when I joined — now I have a portfolio, a freelance gig, and real
+                            mentors."</p>
+                        <div class="tstack-author">
+                            <div class="tstack-avatar-wrap"><img src="https://i.pravatar.cc/150?img=38"
+                                    alt="Meera Thomas"></div>
+                            <div>
+                                <div class="tstack-author-name">Meera Thomas</div>
+                                <div class="tstack-author-role">UI Designer, Trivandrum</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /.tstack-deck -->
+
+                <!-- Controls -->
+                <div class="tstack-controls">
+                    <button class="tstack-btn" id="tstackPrev" aria-label="Previous">&#8592;</button>
+                    <button class="tstack-btn" id="tstackNext" aria-label="Next">&#8594;</button>
                 </div>
-            </div>
+                <!-- Dots -->
+                <div class="tstack-dots" id="tstackDots" style="justify-content:center;margin-top:1rem;">
+                    <span class="tstack-dot active"></span>
+                    <span class="tstack-dot"></span>
+                    <span class="tstack-dot"></span>
+                    <span class="tstack-dot"></span>
+                    <span class="tstack-dot"></span>
+                </div>
+
+            </div><!-- /.tstack-scene -->
         </div>
     </section>
+
+
 
     <!-- Who Is This For Section -->
     <section class="section">
         <div class="container">
-            <h2 class="text-center fade-up">Is this for you?</h2>
+            <h2 class="text-center fade-up">Why you are a perfect fit for this job?</h2>
             <div class="checklist-box fade-up delay-1">
                 <div class="check-item">
                     <span class="icon">
@@ -1323,7 +2124,7 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span>Developers actively looking for internships or full-time roles</span>
+                    <span>Your transparent efforts = the results you get</span>
                 </div>
                 <div class="check-item">
                     <span class="icon">
@@ -1333,7 +2134,7 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span>Freelancers wanting direct access to real clients</span>
+                    <span>You are educated but this economy doesnt let you have a job</span>
                 </div>
                 <div class="check-item">
                     <span class="icon">
@@ -1343,7 +2144,7 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span>Students serious about building a strong tech career</span>
+                    <span>You require a payslip from a corporate</span>
                 </div>
                 <div class="check-item">
                     <span class="icon">
@@ -1353,18 +2154,9 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span>People who value high-quality technical discussions</span>
+                    <span>You dont to climb the corporate ladder but climb it sooner</span>
                 </div>
-                <div class="check-item">
-                    <span class="icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="24" height="24" rx="6" fill="#10B981" fill-opacity="0.15" />
-                            <path d="M7 12.5L10.5 16L17 8" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                    <span>Professionals eager to network and grow together</span>
-                </div>
+
                 <div class="check-item red">
                     <span class="icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1373,7 +2165,8 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span>Not for people who are just lurking with no intent to grow or contribute.</span>
+                    <span>you dont have what to take to show commitment early to take care of
+                        family and have growth in your career the fastest way.</span>
                 </div>
             </div>
         </div>
@@ -1381,20 +2174,128 @@
 
     <!-- About the Admin -->
     <section class="section admin-section">
-        <div class="container admin-content fade-up">
-            <div class="admin-photo">
-                <img src="https://i.pravatar.cc/150?img=14" alt="Akshay">
+        <div class="container">
+
+            <!-- Section Label -->
+            <div class="admin-eyebrow fade-up" style="justify-content:center;margin-bottom:3rem;">
+                <span class="admin-eyebrow-line"></span>
+                Meet the Founder
+                <span class="admin-eyebrow-line"></span>
             </div>
-            <h3 class="admin-name">Akshay</h3>
-            <p class="admin-title">Tech Community Builder | Helping Developers Find Real Opportunities</p>
-            <p class="admin-bio">
-                I noticed a huge gap between talented developers and companies looking to hire. Most public groups were
-                filled with spam, fake links, and irrelevant chatter. I wanted to build a sanctuary for ambitious tech
-                professionals in India.
-            </p>
-            <div class="admin-quote">
-                "This community exists because I wished it existed when I started my career."
-            </div>
+
+            <div class="admin-grid">
+
+                <!-- ── Left: Profile Card ── -->
+                <div class="admin-profile-card fade-up">
+
+                    <div class="admin-photo-wrap">
+                        <div class="admin-photo-ring"></div>
+                        <div class="admin-photo">
+                            <img src="" alt="">
+                        </div>
+                        <div class="admin-online-badge" title="Active"></div>
+                    </div>
+
+                    <h3 class="admin-name"></h3>
+
+                    <div class="admin-role-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Community Founder
+                    </div>
+
+                    <div class="admin-stats-row">
+                        <div class="admin-stat">
+                            <div class="admin-stat-num">1,200+</div>
+                            <div class="admin-stat-label">Members</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num">3+</div>
+                            <div class="admin-stat-label">Yrs Experience</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num">50+</div>
+                            <div class="admin-stat-label">Jobs Posted</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-num">98%</div>
+                            <div class="admin-stat-label">Satisfaction</div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="admin-social-links">
+                        <!-- WhatsApp -->
+                        <a href="apply.html" class="admin-social-link" aria-label="WhatsApp">
+                            <svg viewBox="0 0 448 512">
+                                <path
+                                    d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157z" />
+                            </svg>
+                        </a>
+                        <!-- LinkedIn -->
+                        <a href="#" class="admin-social-link" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                        </a>
+                        <!-- Twitter / X -->
+                        <a href="#" class="admin-social-link" aria-label="Twitter">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                            </svg>
+                        </a>
+                    </div>
+
+                </div><!-- /.admin-profile-card -->
+
+                <!-- ── Right: Bio Panel ── -->
+                <div class="admin-bio-panel fade-up delay-2">
+
+                    <div class="admin-eyebrow">
+                        <span class="admin-eyebrow-line"></span>
+                        The Story Behind the Community
+                    </div>
+
+                    <h2 class="admin-headline" style="margin-bottom:0;">
+                        Building the community <span>I wish existed.</span>
+                    </h2>
+
+                    <p class="admin-bio">
+                        CloutCircle was born from a simple frustration and a big dream. As a developer who struggled to
+                        find real opportunities, genuine mentorship, and a noise-free space to grow —
+                        <strong style="color:#e2e8f0;"> built what needed</strong>. Today, CloutCircle connects
+                        developers, students, and tech enthusiasts with real learning opportunities, industry insights,
+                        and meaningful collaboration — without spam or fluff.
+                    </p>
+
+                    <!-- Expertise Pills -->
+                    <div class="admin-pills">
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Community Building</span>
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Tech Careers</span>
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Developer Mentorship</span>
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Job Placement</span>
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Internships</span>
+                        <span class="admin-pill"><span class="admin-pill-dot"></span>Industry Insights</span>
+                    </div>
+
+                    <!-- Signature Quote -->
+                    <div class="admin-quote-block">
+                        <div class="admin-quote-mark">&ldquo;</div>
+                        <p class="admin-quote-text">
+                            This community exists because I wished it existed when I started my career.
+                            Every job drop, every workshop, every connection made here — it's the
+                            ecosystem I had to build from scratch.
+                        </p>
+                        <div class="admin-quote-author">— Founder of CloutCircle</div>
+                    </div>
+
+                </div><!-- /.admin-bio-panel -->
+
+            </div><!-- /.admin-grid -->
         </div>
     </section>
 
@@ -1516,8 +2417,9 @@
                             if (!startTimestamp) startTimestamp = timestamp;
                             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
 
-                            // Easing function for smoother slowdown
-                            const easeProgress = 1 - Math.pow(1 - progress, 4);
+                            // Optimized Easing: Quintic Out for a more premium finish
+                            const easeProgress = 1 - Math.pow(1 - progress, 5);
+
 
                             const currentNum = Math.floor(easeProgress * targetNum);
                             target.innerText = currentNum + suffix;
@@ -1566,6 +2468,54 @@
                     card.style.setProperty('--mouse-y', `${y}px`);
                 });
             });
+
+            // ── 3D Card Stack ── auto-advance
+            (function () {
+                const cards = Array.from(document.querySelectorAll('.tstack-card'));
+                const dots = Array.from(document.querySelectorAll('.tstack-dot'));
+                const deck = document.getElementById('tstackDeck');
+                const TOTAL = cards.length;
+                const DELAY = 4000;
+                if (!cards.length) return;
+
+                let cur = 0, timer = null;
+
+                function applyStates(idx) {
+                    cards.forEach((c, i) => {
+                        c.classList.remove('state-active', 'state-next', 'state-next2', 'state-prev');
+                        const offset = (i - idx + TOTAL) % TOTAL;
+                        if (offset === 0) c.classList.add('state-active');
+                        else if (offset === 1) c.classList.add('state-next');
+                        else if (offset === 2) c.classList.add('state-next2');
+                        else if (offset === TOTAL - 1) c.classList.add('state-prev');
+                    });
+                    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                }
+
+                function goTo(idx) {
+                    cur = (idx + TOTAL) % TOTAL;
+                    applyStates(cur);
+                }
+
+                function startAuto() {
+                    clearInterval(timer);
+                    timer = setInterval(() => goTo(cur + 1), DELAY);
+                }
+
+                // Interactions
+                cards.forEach((c, i) => c.addEventListener('click', () => { goTo(i); startAuto(); }));
+                dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); startAuto(); }));
+                document.getElementById('tstackPrev').addEventListener('click', () => { goTo(cur - 1); startAuto(); });
+                document.getElementById('tstackNext').addEventListener('click', () => { goTo(cur + 1); startAuto(); });
+
+                // Pause on hover
+                deck.addEventListener('mouseenter', () => clearInterval(timer));
+                deck.addEventListener('mouseleave', startAuto);
+
+                applyStates(0);
+                startAuto();
+            })();
+
         });
     </script>
 </body>
