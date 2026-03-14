@@ -15,14 +15,14 @@
     <style>
         /* CSS Variables */
         :root {
-            --bg-dark: #0f172a;
-            --bg-darker: #0b1120;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --gold: #d4af37;
-            --gold-hover: #f2c94c;
-            --wa-green: #25D366;
+            --bg-dark: #090909;
+            --bg-darker: #000000;
+            --bg-card: rgba(20, 20, 20, 0.7);
+            --gold: #FF6B2B;
+            --gold-hover: #ff854e;
+            --wa-green: #FF6B2B;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #a3a3a3;
             --border-color: rgba(255, 255, 255, 0.08);
             --font-heading: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
@@ -36,12 +36,17 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+
         body {
             font-family: var(--font-body);
             background-color: var(--bg-dark);
             color: var(--text-main);
             line-height: 1.6;
-            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -91,7 +96,7 @@
             left: 0;
             right: 0;
             height: 70px;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(9, 9, 9, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
@@ -145,7 +150,7 @@
         .form-container {
             max-width: 650px;
             margin: 0 auto;
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(9, 9, 9, 0.95));
             padding: 3rem 2.5rem;
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -171,7 +176,7 @@
         .form-control {
             width: 100%;
             padding: 0.8rem 1rem;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(9, 9, 9, 0.6);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: #fff;
@@ -183,7 +188,7 @@
         .form-control:focus {
             outline: none;
             border-color: var(--gold);
-            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 0 2px rgba(255, 107, 43, 0.2);
         }
 
         select.form-control {
@@ -232,7 +237,7 @@
             transition: var(--transition);
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 107, 43, 0.2);
             font-size: 1.1rem;
             margin-top: 1rem;
             font-family: var(--font-heading);
@@ -241,7 +246,7 @@
         .btn-submit:hover {
             background: var(--gold-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 6px 20px rgba(255, 107, 43, 0.4);
         }
 
         .btn-submit:disabled {
@@ -278,7 +283,7 @@
 
         /* Footer */
         footer {
-            background: #020617;
+            background: #090909;
             padding: 3rem 0;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -487,7 +492,7 @@
             <div class="footer-logo">Thecloutcircle<span>.</span></div>
             <p>Tech Community & Job Posting</p>
             <p class="copyright" style="font-size: 0.85rem; color: #64748b; margin-top: 1rem;">Made with ❤️ for Tech
-                Professionals &copy; 2024</p>
+                Professionals &copy; 2026</p>
         </div>
     </footer>
 
@@ -526,28 +531,36 @@
                     location: formData.get('location'),
                     coupon: formData.get('coupon') || 'N/A',
                     languages: langs.join(', '),
+                    status: 'Pending',
                     timestamp: new Date().toLocaleString()
                 };
 
-                // Save to localStorage locally
-                setTimeout(() => {
-                    try {
-                        let applications = JSON.parse(localStorage.getItem('thecloutcircle_applications') || '[]');
-                        applications.push(applicationData);
-                        localStorage.setItem('thecloutcircle_applications', JSON.stringify(applications));
-
+                // Save to API
+                fetch('/api/applications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(applicationData)
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
                         statusMessage.className = 'status-message status-success';
                         statusMessage.textContent = 'Application submitted successfully! We will review and contact you.';
                         form.reset();
-                    } catch (error) {
-                        console.error('Error saving locally:', error);
+                    })
+                    .catch(error => {
+                        console.error('Error saving to server:', error);
                         statusMessage.className = 'status-message status-error';
                         statusMessage.textContent = 'Oops! Something went wrong saving your application.';
-                    } finally {
+                    })
+                    .finally(() => {
                         submitBtn.disabled = false;
                         submitBtn.textContent = 'Submit Application';
-                    }
-                }, 600); // Small visual delay for submission aesthetic
+                    });
             });
         });
     </script>
