@@ -69,6 +69,16 @@ const authenticateToken = (req, res, next) => {
 
 // --- API ROUTES ---
 
+// Route to serve apply.html
+app.get('/apply', (req, res) => {
+    res.sendFile(path.join(__dirname, 'apply.html'));
+});
+
+// Route to serve admin.html
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // 1. Submit new application (Public)
 app.post('/api/applications', (req, res) => {
     const {
