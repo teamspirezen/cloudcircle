@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, '')));
 
 // Simple hardcoded admin password for this use-case (admin123)
 // Hash generated using: bcrypt.hashSync('admin123', 10)
-const ADMIN_PASSWORD_HASH = '$2b$10$WpkkL28KbHrv4kGTafcKGVbiWsCioqii9/4aTlnTxfT6E4K0T4lI2';
+const ADMIN_PASSWORD_HASH = '$2b$10$WpkkL456j28KbHrv4kGTafcKGVbiWsCioqii9/4aTlnTxfT6E4K0T4lI2';
 
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
